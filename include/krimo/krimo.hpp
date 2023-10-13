@@ -1,0 +1,4 @@
+class Krimo {
+public:
+	Krimo();
+};
