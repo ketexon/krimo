@@ -6,7 +6,10 @@ project(Krimo)
 
 set(
 	Sources
-	krimo.hpp krimo.cpp
+	Krimo.hpp Krimo.cpp
+	EventSystem.hpp EventSystem.cpp
+	System.hpp System.cpp
+	types/Delegate.hpp types/Delegate.cpp
 )
 
 list(TRANSFORM Sources PREPEND include/krimo/ REGEX .*\.hpp)
