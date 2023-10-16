@@ -28,32 +28,7 @@ namespace krimo {
 			};
 		}
 
-		inline void Assert(bool cond, std::string msg = "", std::string conditionString = "", std::string file = "", int lineNumber = 0) {
-			if(!cond){
-				using namespace impl;
-
-				std::cerr << file << " (" << lineNumber << "): \n";
-
-				{
-					auto ctx = ConsoleAttributeContext(Output::Stderr, Color::Red);
-					std::cerr << "Test case failed:";
-				}
-
-				std::cerr << "\n\t" << conditionString;
-
-				if(msg.length() > 0){
-					{
-						auto ctx = ConsoleAttributeContext(Output::Stderr, Color::Red);
-						std::cerr << "\nMessage: ";
-					}
-					std::cerr << msg;
-				}
-
-				std::cerr << std::endl;
-
-				std::exit(1);
-			}
-		}
+		void Assert(bool cond, std::string msg = "", std::string conditionString = "", std::string file = "", int lineNumber = 0);
 
 		inline void TestsPassed(){
 			using namespace impl;
@@ -61,6 +36,9 @@ namespace krimo {
 			auto ctx = ConsoleAttributeContext(Output::Stdout, Color::Green);
 			std::cout << "All Tests Passed :)" << std::endl;
 		}
+
+		void SetTestCase(std::string name);
+		std::string GetTestCase();
 	}
 }
 
@@ -74,3 +52,5 @@ namespace krimo {
 #define KRIMO_ASSERT_NOTHROW(cond) { try { cond; } catch(...) { krimo::test::Assert(false, "Condition throws.", #cond, __FILE__, __LINE__); } }
 
 #define KRIMO_TESTS_PASSED() krimo::test::TestsPassed();
+
+#define KRIMO_TEST_CASE(name) krimo::test::SetTestCase(name);

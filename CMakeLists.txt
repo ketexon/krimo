@@ -10,6 +10,7 @@ set(
 	EventSystem.hpp EventSystem.cpp
 	System.hpp System.cpp
 	types/Delegate.hpp types/Delegate.cpp
+	types/TypeID.hpp
 )
 
 list(TRANSFORM Sources PREPEND include/krimo/ REGEX .*\.hpp)

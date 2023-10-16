@@ -3,7 +3,9 @@
 #include <krimo/System.hpp>
 
 namespace krimo {
-	class EventSystem : public System {
 
-	};
+class EventSystem : public System {
+
+};
+
 }

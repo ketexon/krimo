@@ -10,6 +10,40 @@ krimo::test::impl::ConsoleAttributeContext::~ConsoleAttributeContext(){
 	PopConsoleColor(output);
 }
 
+static std::string testCase = "";
+void krimo::test::SetTestCase(std::string s){
+	testCase = s;
+}
+
+std::string krimo::test::GetTestCase(){
+	return testCase;
+}
+
+void krimo::test::Assert(bool cond, std::string msg, std::string conditionString, std::string file, int lineNumber) {
+	if(!cond){
+		if(testCase.length() > 0){
+			auto ctx = ConsoleAttributeContext(Output::Stderr, Color::Red);
+			std::cerr << "Test case \"" << testCase << "\" failed.\n";
+		}
+
+		std::cerr << file << " (" << lineNumber << "):";
+
+		std::cerr << "\n\t" << conditionString;
+
+		if(msg.length() > 0){
+			{
+				auto ctx = ConsoleAttributeContext(Output::Stderr, Color::Red);
+				std::cerr << "\nMessage: ";
+			}
+			std::cerr << msg;
+		}
+
+		std::cerr << std::endl;
+
+		std::exit(1);
+	}
+}
+
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>

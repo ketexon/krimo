@@ -1,5 +1,6 @@
 #include <iostream>
 #include <krimo/types/Delegate.hpp>
+#include <krimo/types/TypeID.hpp>
 #include "../Test.hpp"
 
 int TestFn(int x){
@@ -30,8 +31,10 @@ struct Class {
 	}
 };
 
-int main(){
+void FunctionsTest(){
 	using namespace krimo;
+
+	KRIMO_TEST_CASE("Functions");
 
 	// calling a null function should throw
 	{
@@ -94,6 +97,8 @@ int main(){
 		KRIMO_ASSERT(test(10) == 10);
 		KRIMO_ASSERT(x == 20);
 	}
+
+	KRIMO_TEST_CASE("Events");
 
 	// empty event
 	{
@@ -168,7 +173,48 @@ int main(){
 		event();
 		KRIMO_ASSERT(x == 3);
 	}
+}
 
+void TypeIDTest(){
+	using namespace krimo;
+
+	KRIMO_TEST_CASE("TypeID");
+
+	// type id should be the same for the same type
+	{
+		size_t a = TypeID<int>();
+		size_t b = TypeID<int>();
+		KRIMO_ASSERT(a == b);
+	}
+
+	// type id should be different for a different type
+	{
+		size_t a = TypeID<int>();
+		size_t b = TypeID<float>();
+		KRIMO_ASSERT(a != b);
+	}
+
+	// type id should decay
+	{
+		size_t v = TypeID<int>();
+		size_t lv = TypeID<int&>();
+		size_t rv = TypeID<int&&>();
+		size_t cv = TypeID<const int>();
+		size_t clv = TypeID<const int&>();
+		size_t crv = TypeID<const int&&>();
+		KRIMO_ASSERT(v == lv);
+		KRIMO_ASSERT(v == rv);
+		KRIMO_ASSERT(v == cv);
+		KRIMO_ASSERT(v == clv);
+		KRIMO_ASSERT(v == crv);
+
+		size_t pv = TypeID<int*>();
+		size_t av = TypeID<int[2]>();
+		KRIMO_ASSERT(pv == av);
+	}
+}
+
+int main(){
+	FunctionsTest();
 	KRIMO_TESTS_PASSED();
-	return 0;
 }

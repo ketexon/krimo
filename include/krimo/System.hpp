@@ -2,4 +2,6 @@
 
 class System {
 public:
+	virtual void OnAttach() {};
+	virtual void OnDetach() {};
 };
