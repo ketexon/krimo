@@ -1,0 +1,1 @@
+#include <krimo/SceneTree.hpp>

@@ -1,6 +1,10 @@
+#define KRIMO_READONLY_PROPERTY_SILENTLY_FAIL
+
 #include <iostream>
 #include <krimo/types/Delegate.hpp>
 #include <krimo/types/TypeID.hpp>
+#include <krimo/types/Property.hpp>
+
 #include "../Test.hpp"
 
 int TestFn(int x){
@@ -198,8 +202,8 @@ void TypeIDTest(){
 	{
 		size_t v = TypeID<int>();
 		size_t lv = TypeID<int&>();
-		size_t rv = TypeID<int&&>();
 		size_t cv = TypeID<const int>();
+		size_t rv = TypeID<int&&>();
 		size_t clv = TypeID<const int&>();
 		size_t crv = TypeID<const int&&>();
 		KRIMO_ASSERT(v == lv);
@@ -214,7 +218,40 @@ void TypeIDTest(){
 	}
 }
 
+void PropertyTest(){
+	using namespace krimo;
+
+	KRIMO_TEST_CASE("Property");
+
+	// basic properties
+	{
+		int _prop = 10;
+		Property<int> prop{_prop};
+
+		KRIMO_ASSERT(prop == 10);
+
+		_prop = 11;
+		KRIMO_ASSERT(prop == 11);
+
+		prop = 12;
+		KRIMO_ASSERT(prop == 12);
+	}
+
+	// should do compile time failure if KRIMO_READONLY_PROPERTY_SILENTLY_FAIL is not set
+	{
+		int _prop = 10;
+		ReadonlyProperty<int> prop{_prop};
+
+		KRIMO_ASSERT(prop == 10);
+		prop = 11;
+
+		KRIMO_ASSERT(prop == 10);
+	}
+}
+
 int main(){
 	FunctionsTest();
+	TypeIDTest();
+	PropertyTest();
 	KRIMO_TESTS_PASSED();
 }
