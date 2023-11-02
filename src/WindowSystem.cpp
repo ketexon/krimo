@@ -6,7 +6,8 @@
 namespace krimo {
 namespace impl {
 
-struct WindowClassInternals {
+class WindowClassInternals {
+public:
 	HWND hwnd;
 };
 

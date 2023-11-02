@@ -24,7 +24,7 @@ private:
 	std::unique_ptr<impl::WindowClassInternals> internals;
 
 public:
-
+	Event<WindowEvent> windowEvent;
 
 	void OnAttach() override;
 	// void OnDetach() override;

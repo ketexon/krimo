@@ -4,6 +4,8 @@
 #include <krimo/types/Delegate.hpp>
 #include <krimo/types/TypeID.hpp>
 #include <krimo/types/Property.hpp>
+#include <krimo/types/HashString.hpp>
+#include <krimo/EventEmitter.hpp>
 
 #include "../Test.hpp"
 
@@ -249,9 +251,114 @@ void PropertyTest(){
 	}
 }
 
+
+consteval uint32_t HashStringAssertConstexpr(){
+	using namespace krimo;
+	return "hello"_khs;
+}
+
+void HashStringTest(){
+	using namespace krimo;
+
+	KRIMO_TEST_CASE("HashString");
+
+	// CXString should work like string
+	{
+		KRIMO_ASSERT(CXString("").Size() == 0);
+		KRIMO_ASSERT(CXString("hello").Size() == 5);
+	}
+
+	// should work in consteval
+	{
+		HashStringAssertConstexpr();
+	}
+
+	// should work same at runtime
+	{
+		KRIMO_ASSERT(HashString<"hello">() == HashString("hello"));
+	}
+}
+
+void EventEmitterTest(){
+	using namespace krimo;
+
+	KRIMO_TEST_CASE("EventEmitter");
+
+	struct TestEvent {
+		int val;
+	};
+
+	// Should work when no listeners
+	{
+		EventEmitter<TestEvent> test;
+
+		test.Emit<"hello">(TestEvent{ .val = 10 });
+		test.Emit("goodbye", TestEvent{ .val = 20 });
+	}
+
+	// should call event listeners
+	{
+		EventEmitter<TestEvent> test;
+		int v = 0;
+		test.On<"hello">([&](const TestEvent& e) { v += e.val; });
+
+		test.Emit<"hello">(TestEvent{ .val = 10 });
+
+		KRIMO_ASSERT(v == 10);
+
+		test.Emit<"hello">(TestEvent{ .val = 10 });
+
+		KRIMO_ASSERT(v == 20);
+	}
+
+	// should work for template and parameter event names
+	{
+		EventEmitter<TestEvent> test;
+
+		int v = 0;
+		int w = 0;
+		int x = 0;
+		test.On<"hello">([&](const TestEvent& e) { v += 1; });
+		test.On("hello", [&](const TestEvent& e) { w += 10; });
+		test.On("hello"_khs, [&](const TestEvent& e) { x += 100; });
+
+		test.Emit<"hello">(TestEvent{ .val = 10 });
+
+		KRIMO_ASSERT(v == 1);
+		KRIMO_ASSERT(w == 10);
+		KRIMO_ASSERT(x == 100);
+
+		test.Emit("hello", TestEvent{ .val = 10 });
+
+		KRIMO_ASSERT(v == 2);
+		KRIMO_ASSERT(w == 20);
+		KRIMO_ASSERT(x == 200);
+
+		test.Emit("hello"_khs, TestEvent{ .val = 10 });
+
+		KRIMO_ASSERT(v == 3);
+		KRIMO_ASSERT(w == 30);
+		KRIMO_ASSERT(x == 300);
+	}
+
+	// should call event listeners in order
+	{
+		EventEmitter<TestEvent> test;
+		int v = 0;
+		test.On<"hello">([&](const TestEvent& e) { v = 1; });
+		test.On<"hello">([&](const TestEvent& e) { v = 2; });
+
+		test.Emit<"hello">(TestEvent{ .val = 10 });
+
+		KRIMO_ASSERT(v == 2);
+	}
+}
+
 int main(){
 	FunctionsTest();
 	TypeIDTest();
 	PropertyTest();
+	HashStringTest();
+	EventEmitterTest();
 	KRIMO_TESTS_PASSED();
 }

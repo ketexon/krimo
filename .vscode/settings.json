@@ -57,6 +57,23 @@
 		"span": "cpp",
 		"stack": "cpp",
 		"cstdarg": "cpp",
-		"optional": "cpp"
+		"optional": "cpp",
+		"array": "cpp",
+		"charconv": "cpp",
+		"chrono": "cpp",
+		"format": "cpp",
+		"forward_list": "cpp",
+		"iomanip": "cpp",
+		"locale": "cpp",
+		"mutex": "cpp",
+		"random": "cpp",
+		"ratio": "cpp",
+		"sstream": "cpp",
+		"stop_token": "cpp",
+		"thread": "cpp",
+		"xlocbuf": "cpp",
+		"xlocmes": "cpp",
+		"xlocmon": "cpp",
+		"xloctime": "cpp"
 	}
 }

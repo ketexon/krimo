@@ -17,6 +17,9 @@ set(
 	types/Delegate.hpp types/Delegate.cpp
 	types/TypeID.hpp types/Property.hpp types/Math.hpp
 	types/Object.hpp
+	util/Hash.hpp
+	types/CXString.hpp types/HashString.hpp
+	EventEmitter.hpp
 )
 
 list(TRANSFORM Sources PREPEND include/krimo/ REGEX .*\.hpp)
