@@ -104,6 +104,29 @@ void FunctionsTest(){
 		KRIMO_ASSERT(x == 20);
 	}
 
+	// noncapturing lambda function comparison
+	{
+		auto lambda = [](int x) { return x; };
+		Function<int(int)> a(lambda);
+		Function<int(int)> b(lambda);
+
+		KRIMO_ASSERT(a == b);
+	}
+
+	// capturing lambda function comparison
+	{
+		int x = 10;
+		auto lambda = [&x](int y) { x = 20; return y; };
+		Function<int(int)> a(lambda);
+		Function<int(int)> b(lambda);
+
+		KRIMO_ASSERT(a == b);
+
+		a(2);
+
+		KRIMO_ASSERT(a == b);
+	}
+
 	KRIMO_TEST_CASE("Events");
 
 	// empty event
@@ -276,6 +299,9 @@ void HashStringTest(){
 	// should work same at runtime
 	{
 		KRIMO_ASSERT(HashString<"hello">() == HashString("hello"));
+
+		using namespace std::literals;
+		KRIMO_ASSERT(HashString("hello") == HashString("hello"sv));
 	}
 }
 
@@ -351,6 +377,34 @@ void EventEmitterTest(){
 		test.Emit<"hello">(TestEvent{ .val = 10 });
 
 		KRIMO_ASSERT(v == 2);
+	}
+
+	// should remove event listeners
+	{
+		EventEmitter<TestEvent> test;
+		int v = 0;
+
+		auto lambda = [&](const TestEvent& e) { v += 1; };
+
+		test.On<"hello">(lambda);
+		test.On("hello", lambda);
+		test.On("hello"_khs, lambda);
+
+		test.Emit<"hello">(TestEvent{ .val = 10 });
+
+		KRIMO_ASSERT(v == 3);
+
+		test.Off<"hello">(lambda);
+		test.Emit<"hello">(TestEvent{ .val = 10 });
+		KRIMO_ASSERT(v == 5);
+
+		test.Off("hello", lambda);
+		test.Emit<"hello">(TestEvent{ .val = 10 });
+		KRIMO_ASSERT(v == 6);
+
+		test.Off("hello"_khs, lambda);
+		test.Emit<"hello">(TestEvent{ .val = 10 });
+		KRIMO_ASSERT(v == 6);
 	}
 }
 

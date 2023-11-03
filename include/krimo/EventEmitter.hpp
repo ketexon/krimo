@@ -15,21 +15,34 @@ protected:
 
 public:
 
-	template<CXString s, class F>
-	void On(F callback) {
+	template<CXString s>
+	void On(Action<const TEvent&> callback) {
 		uint32_t hash = HashString<s>();
 		events[hash] += callback;
 	}
 
-	template<class F>
-	void On(std::string_view sv, F callback) {
+	void On(std::string_view sv, Action<const TEvent&> callback) {
 		uint32_t hash = HashString(sv);
 		events[hash] += callback;
 	}
 
-	template<class F>
-	void On(uint32_t hash, F callback) {
+	void On(uint32_t hash, Action<const TEvent&> callback) {
 		events[hash] += callback;
+	}
+
+	template<CXString s>
+	void Off(Action<const TEvent&> callback) {
+		uint32_t hash = HashString<s>();
+		events[hash] -= callback;
+	}
+
+	void Off(std::string_view sv, Action<const TEvent&> callback) {
+		uint32_t hash = HashString(sv);
+		events[hash] -= callback;
+	}
+
+	void Off(uint32_t hash, Action<const TEvent&> callback) {
+		events[hash] -= callback;
 	}
 
 	template<CXString s>
