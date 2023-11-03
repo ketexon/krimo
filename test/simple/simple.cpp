@@ -3,6 +3,7 @@
 #include <krimo/SceneTree.hpp>
 #include <krimo/EventSystem.hpp>
 #include <krimo/RenderingSystem.hpp>
+#include <krimo/WindowSystem.hpp>
 
 using namespace krimo;
 
@@ -15,7 +16,9 @@ class TestComponent : Component {
 
 int main(){
 	Transform node;
-	Krimo{}.WithSystems<EventSystem, RenderingSystem>();
+	Krimo{}
+		.WithSystems<WindowSystem, EventSystem, RenderingSystem>()
+		.Run();
 
 	return 0;
 }

@@ -21,13 +21,14 @@ public:
 class WindowSystem : public System {
 	KRIMO_IMPL_ITYPEID(WindowSystem);
 private:
-	std::unique_ptr<impl::WindowClassInternals> internals;
+	impl::WindowClassInternals* internals;
 
 public:
 	Event<WindowEvent> windowEvent;
 
 	void OnAttach() override;
-	// void OnDetach() override;
+	void OnUpdate() override;
+	void OnDetach() override;
 };
 
 }

@@ -2,6 +2,7 @@
 
 #include <krimo/Macro.hpp>
 #include <krimo/EventSystem.hpp>
+#include <krimo/EventEmitter.hpp>
 #include <krimo/System.hpp>
 #include <concepts>
 #include <vector>
@@ -12,7 +13,15 @@ static_assert(KRIMO_CXX_VERSION > 202000L);
 
 namespace krimo {
 
-class Krimo {
+enum class KrimoEventType {
+	Update
+};
+
+struct KrimoEvent {
+	KrimoEventType type;
+};
+
+class Krimo : public EventEmitter<KrimoEvent> {
 private:
 	std::vector<System*> systems;
 	std::map<TID, System*> systemTIDMap;

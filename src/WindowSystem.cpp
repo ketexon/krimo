@@ -1,4 +1,7 @@
 #include <krimo/WindowSystem.hpp>
+#include <krimo/krimo.hpp>
+#include <iostream>
+
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
@@ -20,11 +23,15 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 		SetWindowLongPtrW(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(createStruct->lpCreateParams));
 	}
 	krimo::WindowSystem* ws = reinterpret_cast<krimo::WindowSystem*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+	if(uMsg == WM_CLOSE){
+		PostQuitMessage(0);
+		return 0;
+	}
 	return DefWindowProcW(hwnd, uMsg, wParam, lParam);
 }
 
 void krimo::WindowSystem::OnAttach(){
-	internals = std::make_unique<impl::WindowClassInternals>();
+	internals = new impl::WindowClassInternals;
 
 	const wchar_t kClassName[] = L"Krimo Class";
 	const wchar_t kWindowName[] = L"Krimo Application";
@@ -53,4 +60,20 @@ void krimo::WindowSystem::OnAttach(){
 	);
 
 	ShowWindow(internals->hwnd, SW_SHOW);
+}
+
+void krimo::WindowSystem::OnUpdate(){
+	MSG msg;
+	while(PeekMessageW(&msg, NULL, 0, 0, TRUE)) {
+		if(msg.message == WM_QUIT){
+			krimo->Quit();
+			return;
+		}
+		TranslateMessage(&msg);
+		DispatchMessageW(&msg);
+	}
+}
+
+void krimo::WindowSystem::OnDetach(){
+	delete internals;
 }

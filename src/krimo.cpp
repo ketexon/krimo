@@ -1,5 +1,7 @@
 #include <krimo/krimo.hpp>
 
+#include <iostream>
+
 krimo::Krimo::Krimo(){
 
 }
